@@ -1,60 +1,56 @@
-function handleSubmit(event) {
-  event.preventDefault();
-
-  const Name = document.getElementById("Name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const dob = document.getElementById("dob").value;
-  const acceptTerms = document.getElementById("acceptTerms").checked;
-
-  const userData = {
-    Name,
-    email,
-    password,
-    dob,
-    acceptTerms,
-  };
-
-  saveEntry(userData);
-
-  document.getElementById("registrationForm").reset();
-
-  updateEntryTable();
-}
-
-let entries = [];
-
-function saveEntry(entry) {
-  entries.push(entry);
-}
-
-function updateEntryTable() {
-  const entriesTable = document.getElementById("entriesTable");
-  const tbody = entriesTable.getElementsByTagName("tbody")[0];
-
-  tbody.innerHTML = "";
-
-  if (entries.length > 0) {
-    entries.forEach((entry) => {
-      const { Name, email, password, dob, acceptTerms } = entry;
-      const newRow = tbody.insertRow();
-
-      const NameCell = newRow.insertCell();
-      const emailCell = newRow.insertCell();
-      const passwordCell = newRow.insertCell();
-      const dobCell = newRow.insertCell();
-      const acceptTermsCell = newRow.insertCell();
-
-      NameCell.textContent = Name;
-      emailCell.textContent = email;
-      passwordCell.textContent = password;
-      dobCell.textContent = dob;
-      acceptTermsCell.textContent = acceptTerms ? "Accepted" : "Not Accepted";
+document.addEventListener('DOMContentLoaded', () => {
+    const registrationForm = document.getElementById('registrationForm');
+    const userTableBody = document.querySelector('#userTable tbody');
+  
+    const userData = JSON.parse(localStorage.getItem('userData')) || [];
+    userData.forEach((data) => addUserToTable(data));
+  
+    registrationForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const dob = document.getElementById('dob').value;
+      const acceptedTerms = document.getElementById('acceptedTerms').checked;
+  
+      if (validateEmail(email) && validateDateOfBirth(dob) && acceptedTerms) {
+        const newUser = { name, email, password, dob, acceptedTerms };
+        addUserToTable(newUser);
+        saveUserData(newUser);
+        registrationForm.reset();
+      } else {
+        alert('Please provide valid Email, Date of Birth, and accept the terms.');
+      }
     });
-  }
-}
-
-updateEntryTable();
-
-const registrationForm = document.getElementById("registrationForm");
-registrationForm.addEventListener("submit", handleSubmit);
+  
+    function validateEmail(email) {
+      const emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+      return emailRegex.test(email);
+    }
+  
+    function validateDateOfBirth(dob) {
+      const currentDate = new Date();
+      const birthDate = new Date(dob);
+      const age = currentDate.getFullYear() - birthDate.getFullYear();
+      return age >= 18 && age <= 55;
+    }
+  
+    function addUserToTable(user) {
+      const newRow = document.createElement('tr');
+      newRow.innerHTML = `
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.password}</td>
+        <td>${user.dob}</td>
+        <td>${user.acceptedTerms ? 'Yes' : 'No'}</td>
+      `;
+      userTableBody.appendChild(newRow);
+    }
+  
+    function saveUserData(user) {
+      const userData = JSON.parse(localStorage.getItem('userData')) || [];
+      userData.push(user);
+      localStorage.setItem('userData', JSON.stringify(userData));
+    }
+  });
+  
