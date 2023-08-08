@@ -71,4 +71,3 @@ function displayEntries() {
   
   userForm.addEventListener("submit", saveUserForm);
   displayEntries();
-
