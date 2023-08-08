@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const registrationForm = document.getElementById('registrationForm');
   const userTableBody = document.querySelector('#userTable tbody');
 
+  // Load existing data from web storage (localStorage)
   const userData = JSON.parse(localStorage.getItem('userData')) || [];
   userData.forEach((user) => addUserToTable(user));
 
@@ -53,4 +54,5 @@ document.addEventListener('DOMContentLoaded', () => {
     localStorage.setItem('userData', JSON.stringify(userData));
   }
 });
+
 
